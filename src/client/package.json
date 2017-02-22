@@ -1,0 +1,32 @@
+{
+  "name": "gambit-game-client",
+  "version": "0.1.0",
+  "description": "Gambit game client developed with ReactJS (+ React-Scripts, React-Bootstrap) & Socket.io-client.",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamiepollock/game-dev-js-gambit.git"
+  },
+  "author": "Jamie Pollock",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jamiepollock/game-dev-js-gambit/issues"
+  },
+  "homepage": "https://github.com/jamiepollock/game-dev-js-gambit#readme",
+  "devDependencies": {
+    "react-scripts": "0.9.0"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "react": "^15.4.2",
+    "react-bootstrap": "^0.30.7",
+    "react-dom": "^15.4.2",
+    "socket.io-client": "^1.7.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
