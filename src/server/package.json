@@ -2,6 +2,7 @@
   "name": "gambit-game-server",
   "version": "0.1.0",
   "description": "Gambit game server developed with Node, Express & Socket.io",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
