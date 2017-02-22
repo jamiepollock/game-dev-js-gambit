@@ -13,12 +13,6 @@
     "type": "git",
     "url": "git+https://github.com/jamiepollock/game-dev-js-gambit.git"
   },
-  "keywords": [
-    "game",
-    "sockets",
-    "nodejs",
-    "express"
-  ],
   "author": "Jamie Pollock",
   "license": "MIT",
   "bugs": {
