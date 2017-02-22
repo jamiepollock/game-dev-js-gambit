@@ -1,0 +1,31 @@
+{
+  "name": "gambit-game-server",
+  "version": "0.1.0",
+  "description": "Gambit game server developed with Node, Express & Socket.io",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "stop": "node index.stop.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamiepollock/game-dev-js-gambit.git"
+  },
+  "keywords": [
+    "game",
+    "sockets",
+    "nodejs",
+    "express"
+  ],
+  "author": "Jamie Pollock",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jamiepollock/game-dev-js-gambit/issues"
+  },
+  "homepage": "https://github.com/jamiepollock/game-dev-js-gambit#readme",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^1.3.7"
+  }
+}
