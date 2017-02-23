@@ -81,7 +81,8 @@ io.on('connection', function (client) {
                     name: data.playerName,
                     ready: false
                 };
-                game.addPlayer(response.gameId, player);
+                game.addPlayer(player);
+                
                 response.player = player;
 
                 client.emit("joinedGame", response);
