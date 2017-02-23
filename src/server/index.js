@@ -46,36 +46,31 @@ io.on('connection', function (client) {
     });
 
     client.on('joinGame', function (data) {
-        var response = {
-            gameId: data.gameId,
-            errors: []
-        };
+        var errors = [];
 
         var game = games.getGameById(data.gameId);
 
         if (game && ioRoomExists(data.gameId)) {
-            response.gameId = game.id;
-
             if (game.isFull()) {
-                response.errors.push({
+                errors.push({
                     target: 'general',
                     message: 'Game is full.'
                 });
             } else if (game.getPlayerByName(data.playerName)) {
-                response.errors.push({
+                errors.push({
                     target: 'playerName',
                     message: "Player name already exists this in game."
                 });
             }
         } else {
-            response.errors.push({
+            errors.push({
                 target: 'gameId',
                 message: "Game does not exist."
             });
         }
 
-        if (response.errors.length > 0) {
-            client.emit("joinGameErrors", response);
+        if (errors.length > 0) {
+            client.emit("joinGameErrors", errors);
         } else {
             client.join(game.id, function () {
                 var player = {
@@ -83,10 +78,13 @@ io.on('connection', function (client) {
                     ready: false
                 };
                 game.addPlayer(player);
-                
-                response.player = player;
+                var response = {
+                    player: player,
+                    gameId: game.id
+                };
 
                 client.emit("joinedGame", response);
+                io.in(game.id).emit('syncPlayerList', game.getPlayers());
                 console.log('Player ' + player.name + ' joined game ' + response.gameId);
             });
         }

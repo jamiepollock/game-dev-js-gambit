@@ -132,7 +132,7 @@ class JoinGame extends Component {
 
         this.props.socket.on('joinGameErrors', function (data) {
             self.setState({
-                errors: data.errors
+                errors: data
             });
         });
     }
