@@ -50,7 +50,7 @@ class CreateGame extends Component {
             playerName: ''
         };
 
-        this.handleFormSubmit = this.handlePlayerNameChange.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this);
     };
 
@@ -71,8 +71,8 @@ class CreateGame extends Component {
 
     render() {
         return (
-            <div className='join-game'>
-                <form>
+            <div className='create-game'>
+                <form onSubmit={this.handleFormSubmit}>
                     <FormGroup
                         controlId="form-playername"
                         validationState={this.getPlayerNameValidationState()}
@@ -104,7 +104,7 @@ class JoinGame extends Component {
             roomId: ''
         };
 
-        this.handleFormSubmit = this.handlePlayerNameChange.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this);
         this.handleRoomIdChange = this.handleRoomIdChange.bind(this);
     };
