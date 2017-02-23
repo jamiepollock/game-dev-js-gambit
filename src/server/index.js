@@ -34,13 +34,13 @@ io.on('connection', function (client) {
         client.join(newGameId, function () {
             var game = games.createGame(newGameId, player, defaults.gameSize);
 
-            var data = {
-                gameId: newGameId,
+            var response = {
+                game: game,
                 player: player
             };
 
-            console.log('Player ' + player.name + ' created game ' + data.gameId);
-            client.emit("joinedGame", data);
+            console.log('Player ' + player.name + ' created game ' + game.id);
+            client.emit("joinedGame", response);
             syncPlayerList(game);
         });
     });
@@ -78,9 +78,10 @@ io.on('connection', function (client) {
                     ready: false
                 };
                 game.addPlayer(player);
+                
                 var response = {
                     player: player,
-                    gameId: game.id
+                    game: game
                 };
 
                 client.emit("joinedGame", response);
