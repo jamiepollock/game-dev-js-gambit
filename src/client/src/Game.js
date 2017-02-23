@@ -13,13 +13,13 @@ class Game extends Component {
             <Grid>
                 <Row className="show-grid">
                     <Col xs={12} md={8}>
-                        <GameArea gameId={this.props.gameId} />
+                        <GameArea game={this.props.game} />
                     </Col>
                     <Col xs={6} md={4}>
-                        <PlayerList socket={this.props.socket} />
+                        <PlayerList socket={this.props.socket} game={this.props.game} />
                         <ReadyButton socket={this.props.socket}
                             player={this.props.player}
-                            gameId={this.props.gameId} />
+                            gameId={this.props.game.id} />
                     </Col>
                 </Row>
             </Grid>
@@ -30,7 +30,7 @@ class Game extends Component {
 class GameArea extends Component {
     render() {
         return (
-            <h2>Game {this.props.gameId}</h2>
+            <h2>Game {this.props.game.id}</h2>
         )
     }
 }

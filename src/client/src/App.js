@@ -25,7 +25,7 @@ class App extends Component {
           game: true
         },
         player: data.player,
-        gameId: data.gameId
+        game: data.game
       });
     });
   }
@@ -40,7 +40,7 @@ class App extends Component {
         <Game show={this.state.show.game}
           socket={this.props.socket}
           title={this.state.title}
-          gameId={this.state.gameId}
+          game={this.state.game}
           player={this.state.player} />
       </main>
     );
