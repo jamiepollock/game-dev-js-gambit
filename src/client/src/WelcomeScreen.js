@@ -8,23 +8,32 @@ class WelcomeScreen extends Component {
         if (!this.props.show) {
             return null;
         }
+
+        var standardContent = (
+            <Accordion>
+                <Panel header="Create Game" eventKey="c">
+                    <CreateGame socket={this.props.socket} />
+                </Panel>
+                <Panel header="Join Game" eventKey="j">
+                    <JoinGame socket={this.props.socket} />
+                </Panel>
+            </Accordion>
+        );
+        var errorContent = (<ErrorMessages errors={this.props.connectionErrors} />);
+
+        var actualContent = this.props.connectionErrors && this.props.connectionErrors.length ? errorContent : standardContent;
+
         return (
             <div className="welcome-screen">
                 <Header title={this.props.title} />
                 <Grid>
                     <Row className="show-grid">
-                        <Accordion>
-                            <Panel header="Create Game" eventKey="c">
-                                <CreateGame socket={this.props.socket} />
-                            </Panel>
-                            <Panel header="Join Game" eventKey="j">
-                                <JoinGame socket={this.props.socket} />
-                            </Panel>
-                        </Accordion>
+                        {actualContent}
                     </Row>
                 </Grid>
             </div>
-        );
+
+        )
     }
 }
 

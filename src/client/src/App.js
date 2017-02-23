@@ -10,7 +10,8 @@ class App extends Component {
       show: {
         welcomeScreen: true,
         game: false
-      }
+      },
+      connectionErrors: []
     };
   }
 
@@ -27,6 +28,29 @@ class App extends Component {
         game: data.game
       });
     });
+
+    this.props.socket.on('connect_error', function (error) {
+      self.setErrorState('Server unavailable.');
+      self.props.socket.close();
+    })
+
+    this.props.socket.on('disconnect', function () {
+      self.setErrorState( 'Disconnected.');
+    });
+  }
+
+  setErrorState(errorMessage) {
+    this.setState({
+      show: {
+        welcomeScreen: true,
+        game: false
+      },
+      player: {},
+      game: {},
+      connectionErrors: [
+        { target: 'general', message: errorMessage }
+      ]
+    });
   }
 
 
@@ -35,7 +59,8 @@ class App extends Component {
       <main role="main">
         <WelcomeScreen show={this.state.show.welcomeScreen}
           socket={this.props.socket}
-          title={this.state.title} />
+          title={this.state.title} 
+          connectionErrors={this.state.connectionErrors} />
         <Game show={this.state.show.game}
           socket={this.props.socket}
           title={this.state.title}
