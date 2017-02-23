@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import { Jumbotron, Accordion, Panel, Grid, Row, Button, FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
+import { Jumbotron, Accordion, Panel, Grid, Row, Button } from 'react-bootstrap';
+import { ErrorMessages, TextField } from './CommonComponents';
 
 class WelcomeScreen extends Component {
     render() {
@@ -47,7 +48,8 @@ class CreateGame extends Component {
         super(props);
 
         this.state = {
-            playerName: ''
+            playerName: '',
+            errors: []
         };
 
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
@@ -56,37 +58,52 @@ class CreateGame extends Component {
 
     handleFormSubmit(e) {
         e.preventDefault();
-        this.props.socket.emit('createGame', this.state.playerName);
+
+        this.setState((prevState, props) => {
+            return {
+                playerName: prevState.playerName.trim()
+            };
+        }, function () {
+            var submissionErrors = this.getValidationErrors();
+            this.attemptSubmit(submissionErrors);
+        });
+    }
+    getValidationErrors() {
+        var submissionErrors = [];
+
+        if (this.state.playerName.length === 0) {
+            submissionErrors.push({ "target": "playerName", "message": "Player Name is required." });
+        }
+
+        return submissionErrors;
+    }
+    attemptSubmit(submissionErrors) {
+        if (submissionErrors.length === 0) {
+            this.props.socket.emit('createGame', this.state.playerName);
+        } else {
+            this.setState({
+                errors: submissionErrors
+            });
+        }
     }
 
     handlePlayerNameChange(e) {
         this.setState({ playerName: e.target.value });
     };
 
-    getPlayerNameValidationState() {
-        if (this.state.errors) {
-            return 'error';
-        }
-    };
-
     render() {
         return (
             <div className='create-game'>
                 <form onSubmit={this.handleFormSubmit}>
-                    <FormGroup
-                        controlId="form-playername"
-                        validationState={this.getPlayerNameValidationState()}
-                    >
-                        <ControlLabel>Player Name</ControlLabel>
-                        <FormControl
-                            type="text"
-                            value={this.state.playerName}
-                            placeholder="Enter Name"
-                            onChange={this.handlePlayerNameChange}
-                        />
-                        <FormControl.Feedback />
-                        <HelpBlock>Your name, visible to other players in the game.</HelpBlock>
-                    </FormGroup>
+                    <ErrorMessages errors={this.state.errors} />
+                    <TextField controlId="create-game--playerName"
+                        label="Player Name"
+                        value={this.state.playerName}
+                        placeholder="Enter Name"
+                        help="Your name, visible to other players in the game."
+                        onChange={this.handlePlayerNameChange}
+                        errorTargetName="playerName"
+                        errors={this.state.errors} />
                     <Button type="submit" bsStyle="primary" bsSize="large" block>Create Game</Button>
                 </form>
             </div>
@@ -101,7 +118,8 @@ class JoinGame extends Component {
 
         this.state = {
             playerName: '',
-            gameId: ''
+            gameId: '',
+            errors: []
         };
 
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
@@ -109,9 +127,57 @@ class JoinGame extends Component {
         this.handleGameIdChange = this.handleGameIdChange.bind(this);
     };
 
+    componentDidMount() {
+        var self = this;
+
+        this.props.socket.on('joinGameErrors', function (data) {
+            self.setState({
+                errors: data.errors
+            });
+        });
+    }
+
     handleFormSubmit(e) {
         e.preventDefault();
-        //send to socket.io;
+
+        this.setState((prevState, props) => {
+            return {
+                playerName: prevState.playerName.trim(),
+                gameId: prevState.gameId.trim()
+            };
+        }, function () {
+            var submissionErrors = this.getValidationErrors();
+            this.attemptSubmit(submissionErrors);
+        });
+    }
+
+    getValidationErrors() {
+        var submissionErrors = [];
+
+        if (this.state.playerName.length === 0) {
+            submissionErrors.push({ "target": "playerName", "message": "Player Name is required." });
+        }
+
+        if (this.state.gameId.length === 0) {
+            submissionErrors.push({ "target": "gameId", "message": "Game ID is required." });
+        }
+
+        return submissionErrors;
+    }
+
+    attemptSubmit(submissionErrors) {
+        if (submissionErrors.length === 0) {
+            var data = {
+                gameId: this.state.gameId,
+                playerName: this.state.playerName
+            }
+
+            this.props.socket.emit('joinGame', data);
+        } else {
+            this.setState({
+                errors: submissionErrors
+            });
+        }
     }
 
     handlePlayerNameChange(e) {
@@ -121,50 +187,29 @@ class JoinGame extends Component {
         this.setState({ gameId: e.target.value });
     };
 
-    getPlayerNameValidationState() {
-        if (this.state.errors) {
-            return 'error';
-        }
-    };
-    getGameIdValidationState() {
-        if (this.state.errors) {
-            return 'error';
-        }
-    };
-
     render() {
         return (
             <div className='join-game'>
-                <form>
-                    <FormGroup
-                        controlId="form-playername"
-                        validationState={this.getPlayerNameValidationState()}
-                    >
-                        <ControlLabel>Player Name</ControlLabel>
-                        <FormControl
-                            type="text"
-                            value={this.state.playerName}
-                            placeholder="Enter Name"
-                            onChange={this.handlePlayerNameChange}
-                        />
-                        <FormControl.Feedback />
-                        <HelpBlock>Your name, visible to other players in the game.</HelpBlock>
-                    </FormGroup>
+                <form onSubmit={this.handleFormSubmit}>
+                    <ErrorMessages errors={this.state.errors} />
 
-                    <FormGroup
-                        controlId="form-gameid"
-                        validationState={this.getGameIdValidationState()}
-                    >
-                        <ControlLabel>Game ID</ControlLabel>
-                        <FormControl
-                            type="text"
-                            value={this.state.gameId}
-                            placeholder="Enter Game ID"
-                            onChange={this.handleGameIdChange}
-                        />
-                        <FormControl.Feedback />
-                        <HelpBlock>The ID of the game you wish to join.</HelpBlock>
-                    </FormGroup>
+                    <TextField controlId="joinGame-playerName"
+                        label="Player Name"
+                        value={this.state.playerName}
+                        placeholder="Enter Name"
+                        help="Your name, visible to other players in the game."
+                        onChange={this.handlePlayerNameChange}
+                        errorTargetName="playerName"
+                        errors={this.state.errors} />
+
+                    <TextField controlId="joinGame-gameId"
+                        label="Game ID"
+                        value={this.state.gameId}
+                        placeholder="Enter Game ID"
+                        help="The ID of the game you wish to join."
+                        onChange={this.handleGameIdChange}
+                        errorTargetName="gameId"
+                        errors={this.state.errors} />
                     <Button type="submit" bsStyle="primary" bsSize="large" block>Join Game</Button>
                 </form>
             </div>
