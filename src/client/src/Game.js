@@ -17,6 +17,9 @@ class Game extends Component {
                     </Col>
                     <Col xs={6} md={4}>
                         <PlayerList socket={this.props.socket} />
+                        <ReadyButton socket={this.props.socket}
+                            player={this.props.player}
+                            gameId={this.props.gameId} />
                     </Col>
                 </Row>
             </Grid>
@@ -67,7 +70,49 @@ class PlayerList extends Component {
             </div>
         );
     }
+}
 
+class ReadyButton extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { ready: this.props.player.ready };
+        this.toggleReadyStateHandler = this.toggleReadyState.bind(this);
+    }
+    componentDidMount() {
+        var self = this;
+
+        this.props.socket.on('changePlayerReadyState', function (data) {
+            self.setState({
+                ready: data.ready
+            });
+        });
+    }
+
+    toggleReadyState(e) {
+        e.preventDefault();
+        var data = {
+            gameId: this.props.gameId,
+            playerName: this.props.player.name,
+            ready: !this.state.ready
+        };
+
+        this.props.socket.emit('setPlayerReadyState', data);
+    };
+    render() {
+        if (this.props.gameStarted) {
+            return (
+                <form onSubmit={this.toggleReadyStateHandler}>
+                    <button disabled="disabled">Ready</button>
+                </form>
+            );
+        } else {
+            return (
+                <form onSubmit={this.toggleReadyStateHandler}>
+                    <button>{this.state.ready ? "Not Ready..." : "Ready!"}</button>
+                </form>
+            );
+        }
+    }
 }
 
 export default Game;

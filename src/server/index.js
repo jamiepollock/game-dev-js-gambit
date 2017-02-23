@@ -90,6 +90,21 @@ io.on('connection', function (client) {
         }
     });
 
+    client.on('setPlayerReadyState', function (data) {
+        var game = games.getGameById(data.gameId);
+        var player = game.getPlayerByName(data.playerName);
+
+        player.ready = data.ready;
+
+        var response = {
+            ready: data.ready
+        };
+
+        client.emit("changePlayerReadyState", response);
+
+        syncPlayerList(game);
+    });
+
     function ioRoomExists(roomId) {
         return io.sockets.adapter.rooms.hasPropertyInvariantCase(roomId);
     }
