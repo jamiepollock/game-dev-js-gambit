@@ -12,11 +12,8 @@ var g = require("./Game.js");
             game.addPlayer(player);
 
             this.games.push(game);
-        },
-        joinGame: function (gameId, player) {
-            var game = this.getGame(gameId);
 
-            game.addPlayer(player);
+            return game;
         },
         getGameById: function (gameId) {
             return this.games.find(function (g) { return g.id.toLowerCase() === gameId.toLowerCase() });
