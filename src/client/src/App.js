@@ -16,8 +16,12 @@ class App extends Component {
   render() {
     return (
       <main role="main">
-        <WelcomeScreen show={this.state.show.welcomeScreen} title={this.state.title} />
-        <Game show={this.state.show.game} />
+        <WelcomeScreen show={this.state.show.welcomeScreen}
+          socket={this.props.socket}
+          title={this.state.title} />
+        <Game show={this.state.show.game}
+          socket={this.props.socket}
+          title={this.state.title} />
       </main>
     );
   }
