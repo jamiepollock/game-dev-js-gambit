@@ -1,8 +1,8 @@
 var express = require('express');
-var games = require('./GameServer.js');
+var GamesServer = require('./GamesServer.js');
 var app = express();
 
-var gameServer = new games();
+var games = new GamesServer();
 var appServer = app.listen(process.env.PORT || 8082, function () {
     var port = appServer.address().port;
     console.log('Server running at port %s', port);
@@ -21,9 +21,9 @@ io.on('connection', function (client) {
     console.log('User connected');
 
     client.on('createGame', function (playerName) {
-        var newGameId = gameServer.generateGameId(defaults.gameIdLength, defaults.gameIdCharacters);
+        var newGameId = games.generateGameId(defaults.gameIdLength, defaults.gameIdCharacters);
         while (ioRoomExists(newGameId)) {
-            newGameId = gameServer.generateGameId(defaults.gameIdLength, defaults.gameIdCharacters);
+            newGameId = games.generateGameId(defaults.gameIdLength, defaults.gameIdCharacters);
         }
 
         var player = {
@@ -32,7 +32,7 @@ io.on('connection', function (client) {
         };
 
         client.join(newGameId, function () {
-            gameServer.createGame(newGameId, player, defaults.gameSize);
+            games.createGame(newGameId, player, defaults.gameSize);
 
             var data = {
                 gameId: newGameId,
@@ -42,6 +42,50 @@ io.on('connection', function (client) {
             console.log('Player ' + player.name + ' created game ' + data.gameId);
             client.emit("joinedGame", data);
         });
+    });
+
+    client.on('joinGame', function (data) {
+        var response = {
+            gameId: data.gameId,
+            errors: []
+        };
+
+        var game = games.getGameById(data.gameId);
+
+        if (game && ioRoomExists(data.gameId)) {
+            if (game.isFull()) {
+                response.errors.push({
+                    target: 'general',
+                    message: 'Game is full.'
+                });
+            } else if (game.getPlayerByName(data.playerName)) {
+                response.errors.push({
+                    target: 'playerName',
+                    message: "Player name already exists this in game."
+                });
+            }
+        } else {
+            response.errors.push({
+                target: 'gameId',
+                message: "Game does not exist."
+            });
+        }
+
+        if (response.errors.length > 0) {
+            client.emit("joinGameErrors", response);
+        } else {
+            client.join(data.gameId, function () {
+                var player = {
+                    name: data.playerName,
+                    ready: false
+                };
+                game.addPlayer(data.gameId, player);
+                response.player = player;
+
+                client.emit("joinedGame", response);
+                console.log('Player ' + player.name + ' joined game ' + data.gameId);
+            });
+        }
     });
 
     function ioRoomExists(roomId) {
