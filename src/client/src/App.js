@@ -40,7 +40,8 @@ class App extends Component {
         <Game show={this.state.show.game}
           socket={this.props.socket}
           title={this.state.title}
-          gameId={this.state.gameId} />
+          gameId={this.state.gameId}
+          player={this.state.player} />
       </main>
     );
   }
