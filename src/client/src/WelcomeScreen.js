@@ -28,18 +28,18 @@ class WelcomeScreen extends Component {
 }
 
 class Header extends Component {
-  render() {
-    return (
-      <Jumbotron>
-        <Grid>
-          <Row className="show-grid center">
-            <img src={logo} className='App-logo' alt='logo' />
-            <h1>{this.props.title}</h1>
-          </Row>
-        </Grid>
-      </Jumbotron>
-    );
-  }
+    render() {
+        return (
+            <Jumbotron>
+                <Grid>
+                    <Row className="show-grid center">
+                        <img src={logo} className='App-logo' alt='logo' />
+                        <h1>{this.props.title}</h1>
+                    </Row>
+                </Grid>
+            </Jumbotron>
+        );
+    }
 }
 
 class CreateGame extends Component {
