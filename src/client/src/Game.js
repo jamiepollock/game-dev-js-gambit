@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, ListGroup, ListGroupItem, Glyphicon } from 'react-bootstrap';
+import { Grid, Row, Col, ListGroup, ListGroupItem, Glyphicon, Button } from 'react-bootstrap';
 
 
 
@@ -83,7 +83,7 @@ class ReadyButton extends Component {
     constructor(props) {
         super(props);
         this.state = { ready: this.props.player.ready };
-        this.toggleReadyStateHandler = this.toggleReadyState.bind(this);
+        this.toggleReadyState = this.toggleReadyState.bind(this);
     }
     componentDidMount() {
         var self = this;
@@ -108,14 +108,14 @@ class ReadyButton extends Component {
     render() {
         if (this.props.gameStarted) {
             return (
-                <form onSubmit={this.toggleReadyStateHandler}>
+                <form onSubmit={this.toggleReadyState}>
                     <button disabled="disabled">Ready</button>
                 </form>
             );
         } else {
             return (
-                <form onSubmit={this.toggleReadyStateHandler}>
-                    <button>{this.state.ready ? "Not Ready..." : "Ready!"}</button>
+                <form onSubmit={this.toggleReadyState}>
+                    <Button type="submit" bsSize="large" bsStyle={this.state.ready ? 'danger' : 'success'} block>{this.state.ready ? "Not Ready..." : "Ready!"}</Button>
                 </form>
             );
         }
