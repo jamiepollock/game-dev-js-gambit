@@ -59,13 +59,20 @@ class PlayerList extends Component {
             return null;
         }
 
+        var freeSlots = [];
+
+        for (var i = 0; i < this.props.game.capacity - this.state.players.length; i++) {
+            freeSlots.push(<ListGroupItem className='playerlist-empty-slot' key={i}><Glyphicon glyph="question-sign" /> Free Slot</ListGroupItem>);
+        }
+
         return (
-            <div className="game-playerlist">
+            <div className="playerlist">
                 <h2>Players</h2>
                 <ListGroup>
                     {this.state.players.map((p, index) =>
-                        <ListGroupItem key={index}><Glyphicon glyph={p.ready ? 'ok' : 'remove'} /> {p.name} ({p.ready ? 'Ready' : 'Not Ready'})</ListGroupItem>
-                    )}
+                        <ListGroupItem key={index}><Glyphicon glyph={p.ready ? 'ok-sign' : 'remove-sign'} /> {p.name} ({p.ready ? 'Ready' : 'Not Ready'})</ListGroupItem>
+                    )}                    
+                    {freeSlots}
                 </ListGroup>
             </div>
         );
