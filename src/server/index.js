@@ -41,7 +41,7 @@ io.on('connection', function (client) {
 
             console.log('Player ' + player.name + ' created game ' + data.gameId);
             client.emit("joinedGame", data);
-            io.in(game.id).emit('syncPlayerList', game.getPlayers());
+            syncPlayerList(game);
         });
     });
 
@@ -84,7 +84,7 @@ io.on('connection', function (client) {
                 };
 
                 client.emit("joinedGame", response);
-                io.in(game.id).emit('syncPlayerList', game.getPlayers());
+                syncPlayerList(game);
                 console.log('Player ' + player.name + ' joined game ' + response.gameId);
             });
         }
@@ -92,6 +92,9 @@ io.on('connection', function (client) {
 
     function ioRoomExists(roomId) {
         return io.sockets.adapter.rooms.hasPropertyInvariantCase(roomId);
+    }
+    function syncPlayerList(game) {
+        io.in(game.id).emit('syncPlayerList', game.getPlayers());
     }
 });
 
