@@ -14,7 +14,7 @@
             this.owner = playerName;
         },
         removePlayer: function (playerName) {
-            this.players = this.players.filter(function (p) { return p.id != playerId });
+            this.players = this.players.filter(function (p) { return p.name != playerName });
         },
         getPlayerByName: function (playerName) {
             return this.players.find(function (p) { return p.name == playerName });
