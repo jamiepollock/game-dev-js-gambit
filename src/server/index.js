@@ -32,7 +32,7 @@ io.on('connection', function (client) {
         };
 
         client.join(newGameId, function () {
-            games.createGame(newGameId, player, defaults.gameSize);
+            var game = games.createGame(newGameId, player, defaults.gameSize);
 
             var data = {
                 gameId: newGameId,
@@ -76,7 +76,7 @@ io.on('connection', function (client) {
         if (response.errors.length > 0) {
             client.emit("joinGameErrors", response);
         } else {
-            client.join(response.gameId, function () {
+            client.join(game.id, function () {
                 var player = {
                     name: data.playerName,
                     ready: false
