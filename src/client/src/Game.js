@@ -1,9 +1,26 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col, ListGroup, ListGroupItem, Glyphicon, Button } from 'react-bootstrap';
 
-
-
 class Game extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            game: {
+                id: '',
+                players: []
+            }
+        };
+    }
+
+    componentDidMount() {
+        var self = this;
+        this.props.socket.on('syncGame', function (data) {
+            self.setState({
+                game: data
+            });
+        });
+    }
+
     render() {
         if (!this.props.show) {
             return null;
@@ -13,13 +30,13 @@ class Game extends Component {
             <Grid>
                 <Row className="show-grid">
                     <Col xs={12} md={8}>
-                        <GameArea game={this.props.game} />
+                        <GameArea game={this.state.game} />
                     </Col>
                     <Col xs={6} md={4}>
-                        <PlayerList socket={this.props.socket} game={this.props.game} />
+                        <PlayerList game={this.state.game} />
                         <ReadyButton socket={this.props.socket}
                             player={this.props.player}
-                            gameId={this.props.game.id} />
+                            gameId={this.state.game.id} />
                     </Col>
                 </Row>
             </Grid>
@@ -36,41 +53,23 @@ class GameArea extends Component {
 }
 
 class PlayerList extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            players: []
-        };
-    }
-
-    componentDidMount() {
-        var self = this;
-        this.props.socket.on('syncPlayerList', function (data) {
-            self.setState({
-                players: data
-            });
-        });
-    }
-
-
     render() {
-        if (this.state.players.length === 0) {
+        if (this.props.game.players.length === 0) {
             return null;
         }
 
         var freeSlots = [];
 
-        for (var i = 0; i < this.props.game.capacity - this.state.players.length; i++) {
-            freeSlots.push(<ListGroupItem className='playerlist-empty-slot' key={i}><Glyphicon glyph="question-sign" /> Free Slot</ListGroupItem>);
+        for (var i = 0; i < this.props.game.capacity - this.props.game.players.length; i++) {
+            freeSlots.push(<ListGroupItem className='playerlist-empty-slot' key={i}><Glyphicon glyph="question-sign" /> <span className="playerlist-empty-slot--handle">Free Slot</span></ListGroupItem>);
         }
 
         return (
             <div className="playerlist">
-                <h2>Players ({this.state.players.length} / {this.props.game.capacity})</h2>
+                <h2>Players ({this.props.game.players.length} / {this.props.game.capacity})</h2>
                 <ListGroup>
-                    {this.state.players.map((p, index) =>
-                        <ListGroupItem key={index}><Glyphicon glyph={p.ready ? 'ok-sign' : 'remove-sign'} /> {p.name} ({p.ready ? 'Ready' : 'Not Ready'})</ListGroupItem>
+                    {this.props.game.players.map((p, index) =>
+                        <ListGroupItem key={index} className="playerlist-slot"><Glyphicon glyph={p.ready ? 'ok-sign' : 'remove-sign'} /> <span className="playerlist-slot--handle">{p.name} ({p.ready ? 'Ready' : 'Not Ready'})</span></ListGroupItem>
                     )}
                     {freeSlots}
                 </ListGroup>

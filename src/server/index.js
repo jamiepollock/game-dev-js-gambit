@@ -41,7 +41,7 @@ io.on('connection', function (client) {
 
             console.log('Player ' + player.name + ' created game ' + game.id);
             client.emit("joinedGame", response);
-            syncPlayerList(game);
+            syncGame(game);
         });
     });
 
@@ -78,15 +78,15 @@ io.on('connection', function (client) {
                     ready: false
                 };
                 game.addPlayer(player);
-                
+
                 var response = {
                     player: player,
                     game: game
                 };
 
                 client.emit("joinedGame", response);
-                syncPlayerList(game);
-                console.log('Player ' + player.name + ' joined game ' + response.gameId);
+                syncGame(game);
+                console.log('Player ' + player.name + ' joined game ' + game.id);
             });
         }
     });
@@ -103,14 +103,14 @@ io.on('connection', function (client) {
 
         client.emit("changePlayerReadyState", response);
 
-        syncPlayerList(game);
+        syncGame(game);
     });
 
     function ioRoomExists(roomId) {
         return io.sockets.adapter.rooms.hasPropertyInvariantCase(roomId);
     }
-    function syncPlayerList(game) {
-        io.in(game.id).emit('syncPlayerList', game.getPlayers());
+    function syncGame(game) {
+        io.in(game.id).emit('syncGame', game);
     }
 });
 
