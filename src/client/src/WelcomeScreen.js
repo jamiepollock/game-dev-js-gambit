@@ -56,7 +56,7 @@ class CreateGame extends Component {
 
     handleFormSubmit(e) {
         e.preventDefault();
-        //send to socket.io;
+        this.props.socket.emit('createRoom', this.state.playerName);
     }
 
     handlePlayerNameChange(e) {
@@ -87,7 +87,7 @@ class CreateGame extends Component {
                         <FormControl.Feedback />
                         <HelpBlock>Your name, visible to other players in the game room.</HelpBlock>
                     </FormGroup>
-                    <Button bsStyle="primary" bsSize="large" block>Create Room</Button>
+                    <Button type="submit" bsStyle="primary" bsSize="large" block>Create Room</Button>
                 </form>
             </div>
         );
