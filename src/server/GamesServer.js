@@ -19,7 +19,7 @@ var g = require("./Game.js");
             game.addPlayer(player);
         },
         getGameById: function (gameId) {
-            return this.games.find(function (g) { return g.id == gameId });
+            return this.games.find(function (g) { return g.id.toLowerCase() === gameId.toLowerCase() });
         },
         generateGameId: function (length, chars) {
             var result = '';

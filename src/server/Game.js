@@ -17,7 +17,7 @@
             this.players = this.players.filter(function (p) { return p.name != playerName });
         },
         getPlayerByName: function (playerName) {
-            return this.players.find(function (p) { return p.name == playerName });
+            return this.players.find(function (p) { return p.name.toLowerCase() == playerName.toLowerCase() });
         },
         getPlayers: function () {
             return this.players;
