@@ -14,10 +14,10 @@ class WelcomeScreen extends Component {
                     <Row className="show-grid">
                         <Accordion>
                             <Panel header="Create Game" eventKey="c">
-                                <CreateGame />
+                                <CreateGame socket={this.props.socket} />
                             </Panel>
                             <Panel header="Join Game" eventKey="j">
-                                <JoinGame />
+                                <JoinGame socket={this.props.socket} />
                             </Panel>
                         </Accordion>
                     </Row>
