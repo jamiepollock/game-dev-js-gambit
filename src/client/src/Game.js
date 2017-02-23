@@ -53,6 +53,18 @@ class GameArea extends Component {
 }
 
 class PlayerList extends Component {
+    isAdminContent(player) {
+        if (this.props.game.owner === player.name) {
+            return (
+                <span className="pull-right">
+                    <Glyphicon glyph="star" title="Admin" />
+                </span>
+            );
+        }
+
+        return null;
+    }
+
     render() {
         if (this.props.game.players.length === 0) {
             return null;
@@ -64,12 +76,16 @@ class PlayerList extends Component {
             freeSlots.push(<ListGroupItem className='playerlist-empty-slot' key={i}><Glyphicon glyph="question-sign" /> <span className="playerlist-empty-slot--handle">Free Slot</span></ListGroupItem>);
         }
 
+
+
         return (
             <div className="playerlist">
                 <h2>Players ({this.props.game.players.length} / {this.props.game.capacity})</h2>
                 <ListGroup>
                     {this.props.game.players.map((p, index) =>
-                        <ListGroupItem key={index} className="playerlist-slot"><Glyphicon glyph={p.ready ? 'ok-sign' : 'remove-sign'} /> <span className="playerlist-slot--handle">{p.name} ({p.ready ? 'Ready' : 'Not Ready'})</span></ListGroupItem>
+                        <ListGroupItem key={index} className="playerlist-slot">
+                            <Glyphicon glyph={p.ready ? 'ok-sign' : 'remove-sign'} /> <span className="playerlist-slot--handle">{p.name} ({p.ready ? 'Ready' : 'Not Ready'})</span> {this.isAdminContent(p)}
+                        </ListGroupItem>
                     )}
                     {freeSlots}
                 </ListGroup>
