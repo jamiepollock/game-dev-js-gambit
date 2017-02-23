@@ -13,6 +13,23 @@ class App extends Component {
     };
   }
 
+
+  componentDidMount() {
+    var self = this;
+
+    this.props.socket.on('joinedGame', function (data) {
+      self.setState({
+        show: {
+          welcomeScreen: false,
+          game: true
+        },
+        player: data.player,
+        gameId: data.gameId
+      });
+    });
+  }
+
+
   render() {
     return (
       <main role="main">

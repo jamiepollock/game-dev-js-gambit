@@ -56,7 +56,7 @@ class CreateGame extends Component {
 
     handleFormSubmit(e) {
         e.preventDefault();
-        this.props.socket.emit('createRoom', this.state.playerName);
+        this.props.socket.emit('createGame', this.state.playerName);
     }
 
     handlePlayerNameChange(e) {
@@ -85,9 +85,9 @@ class CreateGame extends Component {
                             onChange={this.handlePlayerNameChange}
                         />
                         <FormControl.Feedback />
-                        <HelpBlock>Your name, visible to other players in the game room.</HelpBlock>
+                        <HelpBlock>Your name, visible to other players in the game.</HelpBlock>
                     </FormGroup>
-                    <Button type="submit" bsStyle="primary" bsSize="large" block>Create Room</Button>
+                    <Button type="submit" bsStyle="primary" bsSize="large" block>Create Game</Button>
                 </form>
             </div>
         );
@@ -101,12 +101,12 @@ class JoinGame extends Component {
 
         this.state = {
             playerName: '',
-            roomId: ''
+            gameId: ''
         };
 
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handlePlayerNameChange = this.handlePlayerNameChange.bind(this);
-        this.handleRoomIdChange = this.handleRoomIdChange.bind(this);
+        this.handleGameIdChange = this.handleGameIdChange.bind(this);
     };
 
     handleFormSubmit(e) {
@@ -117,8 +117,8 @@ class JoinGame extends Component {
     handlePlayerNameChange(e) {
         this.setState({ playerName: e.target.value });
     };
-    handleRoomIdChange(e) {
-        this.setState({ roomId: e.target.value });
+    handleGameIdChange(e) {
+        this.setState({ gameId: e.target.value });
     };
 
     getPlayerNameValidationState() {
@@ -126,7 +126,7 @@ class JoinGame extends Component {
             return 'error';
         }
     };
-    getRoomIdValidationState() {
+    getGameIdValidationState() {
         if (this.state.errors) {
             return 'error';
         }
@@ -148,24 +148,24 @@ class JoinGame extends Component {
                             onChange={this.handlePlayerNameChange}
                         />
                         <FormControl.Feedback />
-                        <HelpBlock>Your name, visible to other players in the game room.</HelpBlock>
+                        <HelpBlock>Your name, visible to other players in the game.</HelpBlock>
                     </FormGroup>
 
                     <FormGroup
-                        controlId="form-playername"
-                        validationState={this.getRoomIdValidationState()}
+                        controlId="form-gameid"
+                        validationState={this.getGameIdValidationState()}
                     >
-                        <ControlLabel>Room ID</ControlLabel>
+                        <ControlLabel>Game ID</ControlLabel>
                         <FormControl
                             type="text"
-                            value={this.state.roomId}
-                            placeholder="Enter Room ID"
-                            onChange={this.handleRoomIdChange}
+                            value={this.state.gameId}
+                            placeholder="Enter Game ID"
+                            onChange={this.handleGameIdChange}
                         />
                         <FormControl.Feedback />
-                        <HelpBlock>The ID of the room you wish to join.</HelpBlock>
+                        <HelpBlock>The ID of the game you wish to join.</HelpBlock>
                     </FormGroup>
-                    <Button bsStyle="primary" bsSize="large" block>Join Room</Button>
+                    <Button type="submit" bsStyle="primary" bsSize="large" block>Join Game</Button>
                 </form>
             </div>
         );
