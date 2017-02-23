@@ -67,11 +67,11 @@ class PlayerList extends Component {
 
         return (
             <div className="playerlist">
-                <h2>Players</h2>
+                <h2>Players ({this.state.players.length} / {this.props.game.capacity})</h2>
                 <ListGroup>
                     {this.state.players.map((p, index) =>
                         <ListGroupItem key={index}><Glyphicon glyph={p.ready ? 'ok-sign' : 'remove-sign'} /> {p.name} ({p.ready ? 'Ready' : 'Not Ready'})</ListGroupItem>
-                    )}                    
+                    )}
                     {freeSlots}
                 </ListGroup>
             </div>
