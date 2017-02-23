@@ -53,6 +53,8 @@ io.on('connection', function (client) {
         var game = games.getGameById(data.gameId);
 
         if (game && ioRoomExists(data.gameId)) {
+            response.gameId = game.id;
+
             if (game.isFull()) {
                 response.errors.push({
                     target: 'general',
@@ -74,21 +76,34 @@ io.on('connection', function (client) {
         if (response.errors.length > 0) {
             client.emit("joinGameErrors", response);
         } else {
-            client.join(data.gameId, function () {
+            client.join(response.gameId, function () {
                 var player = {
                     name: data.playerName,
                     ready: false
                 };
-                game.addPlayer(data.gameId, player);
+                game.addPlayer(response.gameId, player);
                 response.player = player;
 
                 client.emit("joinedGame", response);
-                console.log('Player ' + player.name + ' joined game ' + data.gameId);
+                console.log('Player ' + player.name + ' joined game ' + response.gameId);
             });
         }
     });
 
     function ioRoomExists(roomId) {
-        return io.sockets.adapter.rooms[roomId] !== undefined;
+        return io.sockets.adapter.rooms.hasPropertyInvariantCase(roomId);
     }
 });
+
+Object.prototype.hasPropertyInvariantCase = function (propertyName) {
+    var targetPropName = propertyName.toLowerCase();
+    var obj = this;
+
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p) && targetPropName == p.toLowerCase()) {
+            return true;
+        }
+    }
+
+    return false;
+};
