@@ -41,6 +41,7 @@ io.on('connection', function (client) {
 
             console.log('Player ' + player.name + ' created game ' + data.gameId);
             client.emit("joinedGame", data);
+            io.in(game.id).emit('syncPlayerList', game.getPlayers());
         });
     });
 
