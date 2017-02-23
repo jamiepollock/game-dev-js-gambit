@@ -6,6 +6,6 @@ body {
 .center {
   text-align: center;
 }
-.App-logo {
-  height: 80px;
+.panel-title a {
+  cursor: pointer;
 }
