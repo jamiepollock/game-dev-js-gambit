@@ -28,7 +28,8 @@ io.on('connection', function (client) {
 
         var player = {
             name: playerName,
-            ready: false
+            ready: false, 
+            score: 0
         };
 
         client.join(newGameId, function () {
@@ -75,7 +76,8 @@ io.on('connection', function (client) {
             client.join(game.id, function () {
                 var player = {
                     name: data.playerName,
-                    ready: false
+                    ready: false,
+                    score: 0
                 };
                 game.addPlayer(player);
 
