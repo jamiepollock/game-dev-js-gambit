@@ -7,7 +7,8 @@ class Game extends Component {
         this.state = {
             game: {
                 id: '',
-                players: []
+                players: [],
+                started: false
             }
         };
     }
@@ -36,7 +37,10 @@ class Game extends Component {
                         <PlayerList game={this.state.game} />
                         <ReadyButton socket={this.props.socket}
                             player={this.props.player}
-                            gameId={this.state.game.id} />
+                            game={this.state.game} />
+                        <GameAdminTools socket={this.props.socket}
+                            player={this.props.player}
+                            game={this.state.game} />
                     </Col>
                 </Row>
             </Grid>
@@ -53,18 +57,6 @@ class GameArea extends Component {
 }
 
 class PlayerList extends Component {
-    isAdminContent(player) {
-        if (this.props.game.owner === player.name) {
-            return (
-                <span className="pull-right">
-                    <Glyphicon glyph="star" title="Admin" />
-                </span>
-            );
-        }
-
-        return null;
-    }
-
     render() {
         if (this.props.game.players.length === 0) {
             return null;
@@ -76,20 +68,33 @@ class PlayerList extends Component {
             freeSlots.push(<ListGroupItem className='playerlist-empty-slot' key={i}><Glyphicon glyph="question-sign" /> <span className="playerlist-empty-slot--handle">Free Slot</span></ListGroupItem>);
         }
 
-
-
         return (
             <div className="playerlist">
                 <h2>Players ({this.props.game.players.length} / {this.props.game.capacity})</h2>
                 <ListGroup>
                     {this.props.game.players.map((p, index) =>
-                        <ListGroupItem key={index} className="playerlist-slot">
-                            <Glyphicon glyph={p.ready ? 'ok-sign' : 'remove-sign'} /> <span className="playerlist-slot--handle">{p.name} ({p.ready ? 'Ready' : 'Not Ready'})</span> {this.isAdminContent(p)}
-                        </ListGroupItem>
+                        <PlayerListItem key={index} player={p} isAdmin={this.props.game.owner === p.name} gameStarted={this.props.game.started} />
                     )}
                     {freeSlots}
                 </ListGroup>
             </div>
+        );
+    }
+}
+
+class PlayerListItem extends Component {
+    render() {
+        var adminTag = this.props.isAdmin ?
+            <span className="pull-right">
+                <Glyphicon glyph="star" title="Admin" />
+            </span> : null;
+
+        var readyTag = this.props.gameStarted ? null : " (" + (this.props.player.ready ? 'Ready' : 'Not Ready') + ')';
+
+        return (
+            <ListGroupItem className="playerlist-slot">
+                <span className="playerlist-slot--handle">{this.props.player.name} {readyTag}</span> {adminTag}
+            </ListGroupItem>
         );
     }
 }
@@ -113,7 +118,7 @@ class ReadyButton extends Component {
     toggleReadyState(e) {
         e.preventDefault();
         var data = {
-            gameId: this.props.gameId,
+            gameId: this.props.game.id,
             playerName: this.props.player.name,
             ready: !this.state.ready
         };
@@ -121,19 +126,62 @@ class ReadyButton extends Component {
         this.props.socket.emit('setPlayerReadyState', data);
     };
     render() {
-        if (this.props.gameStarted) {
-            return (
-                <form onSubmit={this.toggleReadyState}>
-                    <button disabled="disabled">Ready</button>
-                </form>
-            );
-        } else {
-            return (
-                <form onSubmit={this.toggleReadyState}>
-                    <Button type="submit" bsSize="large" bsStyle={this.state.ready ? 'danger' : 'success'} block>{this.state.ready ? "Not Ready..." : "Ready!"}</Button>
-                </form>
-            );
+        if (this.props.game.started) {
+            return null;
         }
+        return (
+            <form onSubmit={this.toggleReadyState}>
+                <Button type="submit" bsSize="large" bsStyle={this.state.ready ? 'danger' : 'success'} block>{this.state.ready ? "Not Ready..." : "Ready!"}</Button>
+            </form>
+        );
+    }
+}
+
+class GameAdminTools extends Component {
+    render() {
+        if (this.props.game.owner !== this.props.player.name) {
+            return null;
+        }
+
+        return (
+            <div className="gameadmintools">
+                <StartGame socket={this.props.socket} game={this.props.game} />
+            </div>
+        );
+    }
+}
+
+class StartGame extends Component {
+    constructor(props) {
+        super(props);
+
+        this.startGame = this.startGame.bind(this);
+    }
+
+    canStartGame() {
+        var game = this.props.game;
+        var readyPlayers = game.players.filter(function (p) { return p.ready; });
+
+        return readyPlayers.length === game.capacity;
+    }
+
+
+    startGame(e) {
+        e.preventDefault();
+
+        this.props.socket.emit('startGame', this.props.game.id);
+    }
+
+    render() {
+        if (this.props.game.started) {
+            return null;
+        }
+
+        return (
+            <form onSubmit={this.startGame}>
+                <Button type="submit" bsSize="large" bsStyle="primary" block disabled={!this.canStartGame()}>Start Game</Button>
+            </form>
+        );
     }
 }
 
