@@ -110,7 +110,7 @@ io.on('connection', function (client) {
 
     client.on('startGame', function (gameId) {
         var game = games.getGameById(gameId);
-        game.started = true;
+        game.startGame();
 
         syncGame(game);
     });

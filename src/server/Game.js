@@ -4,6 +4,9 @@
         this.owner = '';
         this.id = gameId;
         this.capacity = capacity;
+        this.started = false;
+        this.ended = false;
+        this.currentPlayer = {};
     }
 
     Game.prototype = {
@@ -24,6 +27,24 @@
         },
         isFull: function () {
             return this.players.length == this.capacity;
+        },
+        startGame: function () {
+            this.setStartingPlayer();
+
+            this.started = true;
+        },
+        endGame: function () {
+            this.ended = true;
+        },
+        setStartingPlayer: function () {
+            var min = 0;
+            var max = this.players.length;
+            var startingPlayer = this.players[Math.floor(Math.random() * (max - min + 1) + min)];
+
+            console.log(startingPlayer);
+            if (startingPlayer) {
+                this.currentPlayer = startingPlayer.name;
+            }
         }
     }
 
