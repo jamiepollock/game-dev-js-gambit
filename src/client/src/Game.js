@@ -26,12 +26,21 @@ class Game extends Component {
         if (!this.props.show) {
             return null;
         }
-        return (
 
+        let gameContent = null;
+
+        if (this.state.game.started) {
+            gameContent = <GameArea game={this.state.game} player={this.props.player} />;
+        } else {
+            gameContent = <p>Waiting for players</p>;
+        }
+
+        return (
             <Grid>
                 <Row className="show-grid">
                     <Col xs={12} md={8}>
-                        <GameArea game={this.state.game} />
+                        <h2>Game {this.props.game.id}</h2>
+                        {gameContent}
                     </Col>
                     <Col xs={6} md={4}>
                         <PlayerList game={this.state.game} />
@@ -50,9 +59,18 @@ class Game extends Component {
 
 class GameArea extends Component {
     render() {
-        return (
-            <h2>Game {this.props.game.id}</h2>
-        )
+        switch (this.props.game.stage) {
+            case "end":
+                return (
+                    <p>End</p>
+                )
+            default:
+                if (this.props.game.currentPlayer === this.props.player.name) {
+                    return <PlayerTurn player={this.props.player} />
+                }
+
+                return <PlayerWait game={this.props.game} />
+        }
     }
 }
 
@@ -65,7 +83,7 @@ class PlayerList extends Component {
         var freeSlots = [];
 
         for (var i = 0; i < this.props.game.capacity - this.props.game.players.length; i++) {
-            freeSlots.push(<ListGroupItem className='playerlist-empty-slot' key={i}><Glyphicon glyph="question-sign" /> <span className="playerlist-empty-slot--handle">Free Slot</span></ListGroupItem>);
+            freeSlots.push(<ListGroupItem className='playerlist-empty-slot' key={i}><span className="playerlist-empty-slot--handle">Free Slot</span> <Glyphicon glyph="question-sign" /></ListGroupItem>);
         }
 
         return (
@@ -73,7 +91,7 @@ class PlayerList extends Component {
                 <h2>Players ({this.props.game.players.length} / {this.props.game.capacity})</h2>
                 <ListGroup>
                     {this.props.game.players.map((p, index) =>
-                        <PlayerListItem key={index} player={p} isAdmin={this.props.game.owner === p.name} gameStarted={this.props.game.started} />
+                        <PlayerListItem key={index} player={p} isAdmin={this.props.game.owner === p.name} currentPlayer={this.props.game.currentPlayer} gameStarted={this.props.game.started} />
                     )}
                     {freeSlots}
                 </ListGroup>
@@ -84,16 +102,14 @@ class PlayerList extends Component {
 
 class PlayerListItem extends Component {
     render() {
-        var adminTag = this.props.isAdmin ?
-            <span className="pull-right">
-                <Glyphicon glyph="star" title="Admin" />
-            </span> : null;
-
+        var adminTag = this.props.isAdmin ? <Glyphicon glyph="star" title="Admin" /> : null;
         var readyTag = this.props.gameStarted ? null : " (" + (this.props.player.ready ? 'Ready' : 'Not Ready') + ')';
+        var score = this.props.gameStarted ? <span className="pull-right">{this.props.player.score}</span> : null;
+        var listGroupItemStyle = this.props.gameStarted && this.props.currentPlayer === this.props.player.name ? "info" : null;
 
         return (
-            <ListGroupItem className="playerlist-slot">
-                <span className="playerlist-slot--handle">{this.props.player.name} {readyTag}</span> {adminTag}
+            <ListGroupItem bsStyle={listGroupItemStyle}>
+                <span className="playerlist-slot--handle">{this.props.player.name} {adminTag} {readyTag}</span> {score}
             </ListGroupItem>
         );
     }
@@ -184,5 +200,47 @@ class StartGame extends Component {
         );
     }
 }
+
+class PlayerTurn extends Component {
+    render() {
+        return (
+            <h3>Your Turn!</h3>
+        )
+    }
+}
+
+
+class PlayerWait extends Component {
+    render() {
+        return (
+            <h3>{this.props.game.currentPlayer}'s Turn!</h3>
+        )
+    }
+}
+/*
+class GameRoll extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = { rolled: 0 };
+
+        this.roll = this.roll.bind(this);
+    }
+
+    roll(e) {
+        e.preventDefault();
+
+        this.props.socket.emit('playerRoll', number);
+    }
+
+    render() {
+        <div>
+            <form onSubmit={this.roll}>
+                <Button type="submit">ROLL!</Button>
+            </form>
+
+        </div>
+    }
+}*/
 
 export default Game;
