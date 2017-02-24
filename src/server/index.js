@@ -12,7 +12,7 @@ var io = require('socket.io')(appServer);
 
 var defaults = {
     gameIdLength: 4,
-    gameIdCharacters: 'ABCDEFGHJKMNPQRSTUVWXYZ',
+    gameIdCharacters: 'BCDFGHJKMNPQRSTVWXYZ',
     gameSize: 2
 };
 
