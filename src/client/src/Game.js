@@ -60,12 +60,15 @@ class GameArea extends Component {
         let currentPlayer = this.props.game.players.find((p) => {
             return p.clientId === this.props.game.currentPlayerId;
         });
+        let clientPlayer = this.props.game.players.find((p) => {
+            return p.clientId === this.props.socket.id;
+        });
 
-        if (currentPlayer.clientId === this.props.socket.id) {
-            return <PlayerTurn game={this.props.game} currentPlayer={currentPlayer} socket={this.props.socket} />
+        if (currentPlayer.clientId === clientPlayer.clientId) {
+            return <PlayerTurn game={this.props.game} clientPlayer={clientPlayer} socket={this.props.socket} />
         }
 
-        return <PlayerWait game={this.props.game} currentPlayer={currentPlayer} />
+        return <PlayerWait game={this.props.game} clientPlayer={clientPlayer} currentPlayer={currentPlayer} />
     }
 }
 
@@ -219,6 +222,7 @@ class PlayerTurn extends Component {
                 <form onSubmit={this.completeTurn}>
                     <Button type="submit" bsStyle="success">Complete Turn</Button>
                 </form>
+                <PlayerHand player={this.props.clientPlayer} socket={this.props.socket} />
             </div>
         )
     }
@@ -231,34 +235,40 @@ class PlayerWait extends Component {
             return null;
         }
         return (
-            <h3>{this.props.currentPlayer.name}'s Turn!</h3>
+            <div className="playerwait">
+                <h3>{this.props.currentPlayer.name}'s Turn!</h3>
+                <PlayerHand player={this.props.clientPlayer} socket={this.props.socket} />
+            </div>
         )
     }
 }
-/*
-class GameRoll extends Component {
+
+class PlayerHand extends Component {
     constructor(props) {
         super(props);
-
-        this.state = { rolled: 0 };
-
-        this.roll = this.roll.bind(this);
+        this.state = { hand: this.props.player.hand };
     }
 
-    roll(e) {
-        e.preventDefault();
-
-        this.props.socket.emit('playerRoll', number);
-    }
 
     render() {
-        <div>
-            <form onSubmit={this.roll}>
-                <Button type="submit">ROLL!</Button>
-            </form>
-
-        </div>
+        if (!this.state.hand || this.state.hand.length === 0) {
+            return null;
+        }
+        return (
+            <Grid>
+                <Row>
+                    <h3>Your hand</h3>
+                </Row>
+                <Row>
+                    <ul>
+                        {this.state.hand.map((card, index) =>
+                            <li key={index}>{card.name}</li>
+                        )}
+                    </ul>
+                </Row>
+            </Grid>
+        )
     }
-}*/
+}
 
 export default Game;
