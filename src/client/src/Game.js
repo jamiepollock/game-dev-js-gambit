@@ -30,7 +30,7 @@ class Game extends Component {
         let gameContent = null;
 
         if (this.state.game.started) {
-            gameContent = <GameArea game={this.state.game} player={this.props.player} />;
+            gameContent = <GameArea game={this.state.game} socket={this.props.socket} />;
         } else {
             gameContent = <p>Waiting for players</p>;
         }
@@ -45,10 +45,8 @@ class Game extends Component {
                     <Col xs={6} md={4}>
                         <PlayerList game={this.state.game} />
                         <ReadyButton socket={this.props.socket}
-                            player={this.props.player}
                             game={this.state.game} />
                         <GameAdminTools socket={this.props.socket}
-                            player={this.props.player}
                             game={this.state.game} />
                     </Col>
                 </Row>
@@ -91,7 +89,7 @@ class PlayerList extends Component {
                 <h2>Players ({this.props.game.players.length} / {this.props.game.capacity})</h2>
                 <ListGroup>
                     {this.props.game.players.map((p, index) =>
-                        <PlayerListItem key={index} player={p} isAdmin={this.props.game.owner === p.name} currentPlayer={this.props.game.currentPlayer} gameStarted={this.props.game.started} />
+                        <PlayerListItem key={index} player={p} isAdmin={this.props.game.owner === p.clientId} currentPlayerId={this.props.game.currentPlayerId} gameStarted={this.props.game.started} />
                     )}
                     {freeSlots}
                 </ListGroup>
@@ -105,7 +103,7 @@ class PlayerListItem extends Component {
         var adminTag = this.props.isAdmin ? <Glyphicon glyph="star" title="Admin" /> : null;
         var readyTag = this.props.gameStarted ? null : " (" + (this.props.player.ready ? 'Ready' : 'Not Ready') + ')';
         var score = this.props.gameStarted ? <span className="pull-right">{this.props.player.score}</span> : null;
-        var listGroupItemStyle = this.props.gameStarted && this.props.currentPlayer === this.props.player.name ? "info" : null;
+        var listGroupItemStyle = this.props.gameStarted && this.props.currentPlayerId === this.props.player.clientId ? "info" : null;
 
         return (
             <ListGroupItem bsStyle={listGroupItemStyle}>
@@ -118,7 +116,7 @@ class PlayerListItem extends Component {
 class ReadyButton extends Component {
     constructor(props) {
         super(props);
-        this.state = { ready: this.props.player.ready };
+        this.state = { ready: false };
         this.toggleReadyState = this.toggleReadyState.bind(this);
     }
     componentDidMount() {
@@ -135,8 +133,8 @@ class ReadyButton extends Component {
         e.preventDefault();
         var data = {
             gameId: this.props.game.id,
-            playerName: this.props.player.name,
-            ready: !this.state.ready
+            ready: !this.state.ready,
+            playerId: this.props.socket.id
         };
 
         this.props.socket.emit('setPlayerReadyState', data);
@@ -155,7 +153,7 @@ class ReadyButton extends Component {
 
 class GameAdminTools extends Component {
     render() {
-        if (this.props.game.owner !== this.props.player.name) {
+        if (this.props.game.owner !== this.props.socket.id) {
             return null;
         }
 

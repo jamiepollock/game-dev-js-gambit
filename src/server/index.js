@@ -29,13 +29,8 @@ io.on('connection', function (client) {
         client.join(newGameId, function () {
             var game = games.createGame(newGameId, playerName, client.id, defaults.gameSize);
 
-            var response = {
-                game: game,
-                playerName: playerName
-            };
-
             console.log('Player ' + playerName + ' (' + client.id + ') created game ' + game.id);
-            client.emit("joinedGame", response);
+            client.emit("joinedGame", game);
             syncGame(game);
         });
     });
@@ -70,12 +65,7 @@ io.on('connection', function (client) {
             client.join(game.id, function () {
                 game.addPlayer(data.playerName, client.id);
 
-                var response = {
-                    playerName: data.playerName,
-                    game: game
-                };
-
-                client.emit("joinedGame", response);
+                client.emit("joinedGame", game);
                 syncGame(game);
                 console.log('Player ' + data.playerName + ' (' + client.id + ') joined game ' + game.id);
             });
@@ -84,7 +74,7 @@ io.on('connection', function (client) {
 
     client.on('setPlayerReadyState', function (data) {
         var game = games.getGameById(data.gameId);
-        var player = game.getPlayerByName(data.playerName);
+        var player = game.getPlayerByClientId(data.playerId);
 
         player.ready = data.ready;
 

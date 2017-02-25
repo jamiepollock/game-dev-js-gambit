@@ -24,8 +24,7 @@ class App extends Component {
           welcomeScreen: false,
           game: true
         },
-        player: data.player,
-        game: data.game
+        game: data
       });
     });
 
@@ -45,7 +44,6 @@ class App extends Component {
         welcomeScreen: true,
         game: false
       },
-      player: {},
       game: {},
       connectionErrors: [
         { target: 'general', message: errorMessage }
@@ -64,8 +62,7 @@ class App extends Component {
         <Game show={this.state.show.game}
           socket={this.props.socket}
           title={this.state.title}
-          game={this.state.game}
-          player={this.state.player} />
+          game={this.state.game} />
       </main>
     );
   }
