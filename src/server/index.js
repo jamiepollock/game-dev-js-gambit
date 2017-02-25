@@ -18,7 +18,7 @@ var defaults = {
 
 
 io.on('connection', function (client) {
-    console.log('User connected');
+    console.log('User %s connected', client.id);
 
     client.on('createGame', function (playerName) {
         var newGameId = games.generateGameId(defaults.gameIdLength, defaults.gameIdCharacters);
@@ -26,21 +26,15 @@ io.on('connection', function (client) {
             newGameId = games.generateGameId(defaults.gameIdLength, defaults.gameIdCharacters);
         }
 
-        var player = {
-            name: playerName,
-            ready: false, 
-            score: 0
-        };
-
         client.join(newGameId, function () {
-            var game = games.createGame(newGameId, player, defaults.gameSize);
+            var game = games.createGame(newGameId, playerName, client.id, defaults.gameSize);
 
             var response = {
                 game: game,
-                player: player
+                playerName: playerName
             };
 
-            console.log('Player ' + player.name + ' created game ' + game.id);
+            console.log('Player ' + playerName + ' (' + client.id + ') created game ' + game.id);
             client.emit("joinedGame", response);
             syncGame(game);
         });
@@ -74,21 +68,16 @@ io.on('connection', function (client) {
             client.emit("joinGameErrors", errors);
         } else {
             client.join(game.id, function () {
-                var player = {
-                    name: data.playerName,
-                    ready: false,
-                    score: 0
-                };
-                game.addPlayer(player);
+                game.addPlayer(data.playerName, client.id);
 
                 var response = {
-                    player: player,
+                    playerName: data.playerName,
                     game: game
                 };
 
                 client.emit("joinedGame", response);
                 syncGame(game);
-                console.log('Player ' + player.name + ' joined game ' + game.id);
+                console.log('Player ' + data.playerName + ' (' + client.id + ') joined game ' + game.id);
             });
         }
     });
