@@ -1,3 +1,4 @@
+var Player = require("./Player.js");
 (function () {
     function Game(gameId, capacity) {
         this.players = [];
@@ -6,12 +7,15 @@
         this.capacity = capacity;
         this.started = false;
         this.ended = false;
-        this.currentPlayer = {};
+        this.currentPlayerId = '';
+        this.deck = [];
     }
 
     Game.prototype = {
-        addPlayer: function (player) {
-            this.players.push(player);
+        addPlayer: function (playerName, clientId) {
+            var newPlayer = new Player(playerName, clientId);
+
+            this.players.push(newPlayer);
         },
         setOwner: function (playerName) {
             this.owner = playerName;
@@ -21,6 +25,9 @@
         },
         getPlayerByName: function (playerName) {
             return this.players.find(function (p) { return p.name.toLowerCase() == playerName.toLowerCase() });
+        },
+        getPlayerByClientId: function (clientId) {
+            return this.players.find(function (p) { return p.clientId == clientId });
         },
         getPlayers: function () {
             return this.players;
@@ -39,12 +46,22 @@
         setStartingPlayer: function () {
             var min = 0;
             var max = this.players.length;
-            var startingPlayer = this.players[Math.floor(Math.random() * (max - min + 1) + min)];
+            var startingPlayerIndex = Math.floor(Math.random() * (max - min) + min);
 
-            console.log(startingPlayer);
-            if (startingPlayer) {
-                this.currentPlayer = startingPlayer.name;
+            if (startingPlayerIndex > -1) {
+                this.currentPlayerId = this.players[startingPlayerIndex].clientId;
             }
+        },
+        moveToNextPlayer: function () {
+            var currentPlayer = this.getPlayerByClientId(this.currentPlayerId);
+            var currentPlayerIndex = this.players.indexOf(currentPlayer);
+
+            if (currentPlayerIndex < this.players.length - 1) {
+                currentPlayerIndex++;
+            } else {
+                currentPlayerIndex = 0;
+            }
+            this.currentPlayerId = this.players[currentPlayerIndex].clientId
         }
     }
 

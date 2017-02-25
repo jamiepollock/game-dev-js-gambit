@@ -6,10 +6,10 @@ var g = require("./Game.js");
     }
 
     GamesServer.prototype = {
-        createGame: function (gameId, player, capacity) {
+        createGame: function (gameId, playerName, clientId, capacity) {
             var game = new g(gameId, capacity);
-            game.setOwner(player.name);
-            game.addPlayer(player);
+            game.addPlayer(playerName, clientId);
+            game.setOwner(clientId);
 
             this.games.push(game);
 
