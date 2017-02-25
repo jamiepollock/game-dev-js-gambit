@@ -9,3 +9,24 @@ body {
 .panel-title a {
   cursor: pointer;
 }
+
+.cards {
+  display: block;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.cards-card {
+  display: inline-block;
+}
+.cards-card--image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.cards-card--name {
+  display: block;
+  font-style: italic;
+  text-align: center;
+  margin: 0.5em 0 0 0;
+}

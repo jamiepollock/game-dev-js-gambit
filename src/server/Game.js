@@ -1,32 +1,41 @@
 var Player = require("./Player.js");
 (function () {
     const cardTypes = [{
-        name: `The Ace`,
+        name: `The Artist`,
+        id: 'artist',
         quantity: 5
     }, {
-        name: `The Jester`,
+        name: `The Butcher`,
+        id: 'butcher',
         quantity: 5
     }, {
-        name: `The Thief`,
+        name: `The Detective`,
+        id: 'detective',
         quantity: 5
     }, {
-        name: `The Harlequin`,
-        quantity: 5
+        name: `The Gift`,
+        id: 'gift',
+        quantity: 2
     }, {
-        name: `The Scientist`,
+        name: `The Grim`,
+        id: 'grim',
         quantity: 5
     }, {
         name: 'The Lawmaker',
+        id: 'lawmaker',
         quantity: 5
     }, {
-        name: 'The Shifter',
+        name: 'The Lover',
+        id: 'lover',
         quantity: 5
     }, {
-        name: 'The Seer',
+        name: 'The Musician',
+        id: 'musician',
         quantity: 5
     }, {
-        name: 'Home Turf',
-        quantity: 2
+        name: 'The Traveller',
+        id: 'traveller',
+        quantity: 5
     }];
 
     function Game(gameId, capacity) {
@@ -96,9 +105,10 @@ var Player = require("./Player.js");
             for (var cardIndex = 0; cardIndex < cardTypes.length; cardIndex++) {
                 var card = cardTypes[cardIndex];
 
-                for (var quanityCounter = 0; quanityCounter < card.quantity; quanityCounter++) {
+                for (var quantityCounter = 0; quantityCounter < card.quantity; quantityCounter++) {
                     this.deck.push({
-                        name: card.name
+                        name: card.name,
+                        id: card.id
                     });
                 }
             }

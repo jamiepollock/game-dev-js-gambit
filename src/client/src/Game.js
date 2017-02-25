@@ -249,6 +249,9 @@ class PlayerHand extends Component {
         this.state = { hand: this.props.player.hand };
     }
 
+    getCardUrl(id) {
+        return process.env.PUBLIC_URL + '/assets/' + id + '-card.png';
+    }
 
     render() {
         if (!this.state.hand || this.state.hand.length === 0) {
@@ -260,9 +263,9 @@ class PlayerHand extends Component {
                     <h3>Your hand</h3>
                 </Row>
                 <Row>
-                    <ul>
+                    <ul className="cards">
                         {this.state.hand.map((card, index) =>
-                            <li key={index}>{card.name}</li>
+                            <li key={index} className="cards-card"><img src={this.getCardUrl(card.id)} className="cards-card--image" alt={card.name} /><span className="cards-card--name">{card.name}</span></li>
                         )}
                     </ul>
                 </Row>
