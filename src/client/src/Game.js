@@ -57,18 +57,15 @@ class Game extends Component {
 
 class GameArea extends Component {
     render() {
-        switch (this.props.game.stage) {
-            case "end":
-                return (
-                    <p>End</p>
-                )
-            default:
-                if (this.props.game.currentPlayer === this.props.player.name) {
-                    return <PlayerTurn player={this.props.player} />
-                }
+        let currentPlayer = this.props.game.players.find((p) => {
+            return p.clientId === this.props.game.currentPlayerId;
+        });
 
-                return <PlayerWait game={this.props.game} />
+        if (currentPlayer.clientId === this.props.socket.id) {
+            return <PlayerTurn game={this.props.game} currentPlayer={currentPlayer} socket={this.props.socket} />
         }
+
+        return <PlayerWait game={this.props.game} currentPlayer={currentPlayer} />
     }
 }
 
@@ -200,9 +197,29 @@ class StartGame extends Component {
 }
 
 class PlayerTurn extends Component {
+    constructor(props) {
+        super(props);
+
+        this.completeTurn = this.completeTurn.bind(this);
+    }
+
+    completeTurn(e) {
+        e.preventDefault();
+        var data = {
+            gameId: this.props.game.id
+        };
+
+        this.props.socket.emit('completeTurn', data);
+    }
+
     render() {
         return (
-            <h3>Your Turn!</h3>
+            <div className="playerturn">
+                <h3>Your Turn!</h3>
+                <form onSubmit={this.completeTurn}>
+                    <Button type="submit" bsStyle="success">Complete Turn</Button>
+                </form>
+            </div>
         )
     }
 }
@@ -210,8 +227,11 @@ class PlayerTurn extends Component {
 
 class PlayerWait extends Component {
     render() {
+        if (!this.props.game.currentPlayerId || this.props.game.currentPlayerId.length === 0) {
+            return null;
+        }
         return (
-            <h3>{this.props.game.currentPlayer}'s Turn!</h3>
+            <h3>{this.props.currentPlayer.name}'s Turn!</h3>
         )
     }
 }

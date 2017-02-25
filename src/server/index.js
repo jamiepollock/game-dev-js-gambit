@@ -94,6 +94,13 @@ io.on('connection', function (client) {
         syncGame(game);
     });
 
+    client.on('completeTurn', function (data) {
+        var game = games.getGameById(data.gameId);
+        game.moveToNextPlayer();
+
+        syncGame(game);
+    });
+
     function ioRoomExists(roomId) {
         return io.sockets.adapter.rooms.hasPropertyInvariantCase(roomId);
     }
